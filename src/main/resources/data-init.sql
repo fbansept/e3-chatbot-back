@@ -1,4 +1,4 @@
-INSERT INTO app_user ( email, password) VALUES
-    ( 'a@a.com', 'root'),
-    ( 'b@b.com', 'root'),
-    ( 'c@c.com', 'root');
+INSERT INTO app_user ( email, password, pseudo) VALUES
+    ( 'a@a.com', 'root', 'utilisateur A'),
+    ( 'b@b.com', 'root', 'utilisateur B'),
+    ( 'c@c.com', 'root', 'utilisateur C');
