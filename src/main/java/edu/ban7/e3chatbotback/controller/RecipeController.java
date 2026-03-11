@@ -92,6 +92,9 @@ public class RecipeController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        //on empêche la modification du créateur
+        recipeToBeUpdated.setCreator(optionalRecipeDb.get().getCreator());
+
         recipeDao.save(recipeToBeUpdated);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
