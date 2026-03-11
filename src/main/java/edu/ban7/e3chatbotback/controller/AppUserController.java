@@ -1,7 +1,9 @@
 package edu.ban7.e3chatbotback.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import edu.ban7.e3chatbotback.dao.AppUserDao;
 import edu.ban7.e3chatbotback.model.AppUser;
+import edu.ban7.e3chatbotback.view.AppUserView;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +20,7 @@ public class AppUserController {
     protected AppUserDao appUserDao;
 
     @GetMapping("/user/list")
+    @JsonView(AppUserView.class)
     public List<AppUser> getAll() {
 
         return appUserDao.findAll();
@@ -25,6 +28,7 @@ public class AppUserController {
     }
 
     @GetMapping("/user/{id}")
+    @JsonView(AppUserView.class)
     public AppUser get(@PathVariable int id) {
 
         Optional<AppUser> optionalAppUser = appUserDao.findById(id);
