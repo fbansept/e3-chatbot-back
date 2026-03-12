@@ -2,6 +2,7 @@ package edu.ban7.e3chatbotback.controller;
 
 import edu.ban7.e3chatbotback.dao.AppUserDao;
 import edu.ban7.e3chatbotback.model.AppUser;
+import edu.ban7.e3chatbotback.security.AppUserDetails;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.validation.Valid;
@@ -16,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -44,22 +46,23 @@ public class AuthController {
     public ResponseEntity<String> login(@RequestBody @Validated(AppUser.OnLogin.class) AppUser user) {
 
         try {
-            authenticationProvider.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            user.getEmail(),
-                            user.getPassword()));
+            AppUserDetails userDetails = (AppUserDetails)authenticationProvider
+                    .authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                user.getEmail(),
+                                user.getPassword()))
+                    .getPrincipal();
+
+            String jwt = Jwts.builder()
+                    .setSubject(user.getEmail())
+                    .addClaims(Map.of("role", userDetails.getUser().isAdmin() ? "admin": "user"))
+                    .signWith(SignatureAlgorithm.HS256, "secret")
+                    .compact();
+
+            return new ResponseEntity<>(jwt, HttpStatus.OK);
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
-        String jwt = Jwts.builder()
-                .setSubject(user.getEmail())
-                .signWith(SignatureAlgorithm.HS256, "secret")
-                .compact();
-
-        return new ResponseEntity<>(jwt, HttpStatus.OK);
-
     }
-
-
 }
