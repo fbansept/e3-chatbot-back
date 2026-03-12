@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.ban7.e3chatbotback.dao.RecipeDao;
 import edu.ban7.e3chatbotback.model.AppUser;
 import edu.ban7.e3chatbotback.model.Recipe;
+import edu.ban7.e3chatbotback.security.IsAdmin;
+import edu.ban7.e3chatbotback.security.IsUser;
 import edu.ban7.e3chatbotback.view.RecipeView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +25,7 @@ public class RecipeController {
 
     @GetMapping("/recipe/list")
     @JsonView(RecipeView.class)
+    @IsUser
     public ResponseEntity<List<Recipe>> getAll() {
 
         return new ResponseEntity<>(recipeDao.findAll(), HttpStatus.OK);
@@ -30,6 +34,7 @@ public class RecipeController {
 
     @GetMapping("/recipe/{id}")
     @JsonView(RecipeView.class)
+    @IsUser
     public ResponseEntity<Recipe> get(@PathVariable int id) {
 
         Optional<Recipe> optionalRecipe = recipeDao.findById(id);
@@ -47,6 +52,7 @@ public class RecipeController {
     }
 
     @DeleteMapping("/recipe/{id}")
+    @IsAdmin
     public ResponseEntity<Void> delete(@PathVariable int id) {
 
         Optional<Recipe> optionalRecipe = recipeDao.findById(id);
@@ -64,6 +70,7 @@ public class RecipeController {
 
     @PostMapping("/recipe")
     @JsonView(RecipeView.class)
+    @IsAdmin
     public ResponseEntity<Recipe> create(@RequestBody Recipe recipe) {
 
         //TODO : systeme d'authentification (en attendant on affecte le premier utilisateur)
@@ -77,6 +84,7 @@ public class RecipeController {
     }
 
     @PutMapping("/recipe/{id}")
+    @IsAdmin
     public ResponseEntity<Void> update(
             @PathVariable int id,
             @RequestBody Recipe recipeToBeUpdated) {

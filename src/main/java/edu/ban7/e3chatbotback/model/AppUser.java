@@ -9,9 +9,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -19,6 +16,7 @@ public class AppUser {
 
     public interface OnUpdate {}
     public interface OnCreate {}
+    public interface OnLogin {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,16 +24,18 @@ public class AppUser {
     private Integer id;
 
     @Column(nullable = false, unique = true)
-    @Email(groups = {OnCreate.class, OnUpdate.class})
-    @NotBlank(groups = {OnCreate.class, OnUpdate.class})
+    @Email(groups = {OnCreate.class, OnUpdate.class, OnLogin.class})
+    @NotBlank(groups = {OnCreate.class, OnUpdate.class, OnLogin.class})
     private String email;
 
     @Column(nullable = false)
-    @NotBlank(groups = {OnCreate.class})
+    @NotBlank(groups = {OnCreate.class, OnLogin.class})
     private String password;
 
     @Column(nullable = false)
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     @JsonView({AppUserView.class , RecipeView.class})
     private String pseudo;
+
+    private boolean admin = false;
 }
